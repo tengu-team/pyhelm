@@ -1,4 +1,7 @@
-import cStringIO
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 import itertools
 import os
 import pygit2
@@ -36,7 +39,7 @@ def from_repo(repo_url, chart, version=None):
             fname = url.split('/')[-1]
             try:
                 req = requests.get(url, stream=True)
-                fobj = cStringIO.StringIO(req.content)
+                fobj = StringIO(req.content)
                 tar = tarfile.open(mode="r:*", fileobj=fobj)
                 tar.extractall(_tmp_dir)
                 return os.path.join(_tmp_dir, chart)
