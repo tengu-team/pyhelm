@@ -142,6 +142,7 @@ class ChartBuilder(object):
 
         # process all files in templates/ as a template to attach to the chart
         # building a Template object
+        import ipdb; ipdb.set_trace()
         templates = []
         if not os.path.exists(os.path.join(self.source_directory,
                                            'templates')):
@@ -157,7 +158,7 @@ class ChartBuilder(object):
                 templates.append(Template(name=tname,
                                           data=open(os.path.join(root,
                                                                  tpl_file),
-                                                    'r').read()))
+                                                    'rb').read()))
         return templates
 
     def get_helm_chart(self):

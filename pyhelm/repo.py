@@ -1,7 +1,7 @@
 try:
     from StringIO import StringIO
 except ImportError:
-    from io import StringIO
+    from io import BytesIO as StringIO
 import itertools
 import os
 import pygit2
