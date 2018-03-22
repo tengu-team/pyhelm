@@ -70,11 +70,7 @@ class ChartBuilder(object):
                      self.chart.source.location,
                      subpath, self.chart.name)
 
-        if self.chart.source.type == 'git':
-            self._source_tmp_dir = repo.git_clone(self.chart.source.location,
-                                                  self.chart.source.reference)
-
-        elif self.chart.source.type == 'repo':
+        if self.chart.source.type == 'repo':
             self._source_tmp_dir = repo.from_repo(self.chart.source.location,
                                                   self.chart.name,
                                                   self.chart.version)
