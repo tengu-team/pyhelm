@@ -138,7 +138,6 @@ class ChartBuilder(object):
 
         # process all files in templates/ as a template to attach to the chart
         # building a Template object
-        import ipdb; ipdb.set_trace()
         templates = []
         if not os.path.exists(os.path.join(self.source_directory,
                                            'templates')):

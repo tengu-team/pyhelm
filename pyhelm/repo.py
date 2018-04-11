@@ -4,7 +4,6 @@ except ImportError:
     from io import BytesIO as StringIO
 import itertools
 import os
-import pygit2
 import requests
 import shutil
 import tarfile
@@ -36,30 +35,23 @@ def from_repo(repo_url, chart, version=None):
     try:
         metadata = sorted(versions, key=lambda x: x['version'])[0]
         for url in metadata['urls']:
-            fname = url.split('/')[-1]
             try:
                 req = requests.get(url, stream=True)
                 fobj = StringIO(req.content)
                 tar = tarfile.open(mode="r:*", fileobj=fobj)
                 tar.extractall(_tmp_dir)
                 return os.path.join(_tmp_dir, chart)
-            except:
-                # NOTE(flaper87): Catch requests errors
-                # and untar errors
-                pass
+            except requests.exceptions.RequestException as e:
+                raise RuntimeError('Requests error, could not GET resource at %s: \n %s' % (url, str(e)))
+            except tarfile.TarError as e:
+                raise RuntimeError('Could no untar chart: \n %s' % str(e))
     except IndexError:
         raise RuntimeError('Chart version %s not found' % version)
 
 
-def git_clone(repo_url, branch='master'):
-    """clones repo to a /tmp/ dir"""
-
-    _tmp_dir = tempfile.mkdtemp(prefix='pyhelm-', dir='/tmp')
-    pygit2.clone_repository(repo_url, _tmp_dir, checkout_branch=branch)
-
-    return _tmp_dir
-
-
 def source_cleanup(target_dir):
     """Clean up source."""
-    shutil.rmtree(target_dir)
+    try:
+        shutil.rmtree(target_dir)
+    except shutil.Error as e:
+        raise RuntimeError('Could not delete chart source at %s: \n %s' % (target_dir, str(e)))
